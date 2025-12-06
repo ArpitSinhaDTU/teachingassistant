@@ -1,0 +1,301 @@
+=== TEACHING ANALYTICS REPORT (AUTOMATED) ===
+
+1. Executive Summary
+---------------------
+Overall Delivery Score (1–10): 8.8
+Pacing: 9.0 | Clarity: 10.0 | Filler Management: 8.6 | Vocal Expressiveness: 9.0 | Physical Engagement: 7.0
+- Pacing is broadly acceptable, although local deviations still appear and should be reviewed for improvement.
+- Vocal clarity is generally strong, with only minor degradation in difficult segments.
+- Filler usage is reasonably controlled and not a major weakness.
+- Vocal expressiveness is adequate and helps maintain attention.
+- Regarding body language, physical movement is moderate and generally acceptable.
+
+2. Key Quantitative Metrics
+---------------------------
+  • Average speaking rate (SR): 132.2 words/minute  (articulation rate: 132.2 words/minute)
+  • Mean clarity index (higher is better): 96.32
+  • Filler rate: 1.9% of all words
+  • Mean pitch standard deviation: 77.1 Hz (indicator of vocal variety)
+  • Mean motion index: 0.0133 (global frame-difference based movement)
+
+  State usage (time spent in each behaviour):
+    - S1 (Normal): 71.8%
+    - S2 (Too Fast): 2.6%
+    - S3 (Over-Pausing / Too Slow): 20.5%
+    - S6 (High Filler Usage): 5.1%
+
+3. Behavioural Dynamics Over Time
+---------------------------------
+  Dominant observed states:
+    S1 (Normal): 71.8% of time
+    S3 (Over-Pausing / Too Slow): 20.5% of time
+    S6 (High Filler Usage): 5.1% of time
+    S2 (Too Fast): 2.6% of time
+
+  High-probability state transitions:
+    S1 (Normal) -> S1 (Normal): 71.4%
+    S2 (Too Fast) -> S1 (Normal): 100.0%
+    S3 (Over-Pausing / Too Slow) -> S1 (Normal): 85.7%
+    S6 (High Filler Usage) -> S3 (Over-Pausing / Too Slow): 100.0%
+
+  Interpretation:
+  - Recurrent self-transitions (e.g., S2→S2 or S5→S5) indicate stable habits that are unlikely to change spontaneously.
+  - Frequent transitions from a normal state (S1) into problematic states (e.g., S2, S3) show where pacing or clarity tends to break down.
+  - If the Markov structure remains unchanged, future lectures will statistically replicate the same behaviour patterns.
+
+============================================================
+4. Feature Glossary & Detailed Metrics
+============================================================
+
+This section explains every feature extracted and analyzed.
+
+────────────────────────────────────────
+A. AUDIO FRAME-LEVEL FEATURES
+────────────────────────────────────────
+
+  1. RMS Energy (Root Mean Square)
+     ├─ What: Measures the average loudness/volume of the audio signal
+     ├─ How: Computed per 25ms audio frame as sqrt(mean(samples²))
+     ├─ Ideal Range: 0.02 - 0.10 (for normalized [-1,1] audio)
+     ├─ Your Average: 0.0426
+     └─ Interpretation: Lower values indicate soft speech; very low (<0.005) = silence
+
+  2. ZCR (Zero Crossing Rate)
+     ├─ What: Frequency at which the audio signal crosses zero amplitude
+     ├─ How: Count of sign changes per frame, normalized to [0,1]
+     ├─ Your Average: 0.1153
+     └─ Interpretation: High ZCR = noise/fricatives; Low ZCR = voiced speech (vowels)
+
+  3. Pitch / F0 (Fundamental Frequency)
+     ├─ What: The perceived tone of voice, measured in Hz
+     ├─ How: Autocorrelation-based pitch detection per frame
+     ├─ Typical Range: 85-180 Hz (male), 165-255 Hz (female)
+     ├─ Your Mean F0: 212.8 Hz
+     ├─ Your F0 Std Dev: 77.1 Hz (expressiveness indicator)
+     └─ Interpretation: Low std dev (<15 Hz) = monotone; High (>30 Hz) = expressive
+
+  4. Voiced Ratio
+     ├─ What: Fraction of frames with detectable pitch (voiced speech)
+     ├─ How: Percentage of frames where F0 > 40 Hz
+     ├─ Your Average: 61.2%
+     └─ Interpretation: Higher = more continuous speech; Lower = more silence/pauses
+
+  5. Clarity Index (Cepstrum-based)
+     ├─ What: Measures voice clarity vs reverberation/noise
+     ├─ How: Ratio of low-quefrency to high-quefrency cepstral energy
+     ├─ Ideal: > 1.0 (higher is clearer)
+     ├─ Your Average: 96.32
+     └─ Interpretation: Low values suggest echo, room noise, or poor mic placement
+
+────────────────────────────────────────
+B. SPEECH & TRANSCRIPTION FEATURES
+────────────────────────────────────────
+
+  6. Speaking Rate (SR)
+     ├─ What: Words per minute including pauses
+     ├─ How: (word count / total duration) × 60
+     ├─ Ideal Range: 120-180 WPM for lectures
+     ├─ Your Average: 132.2 WPM
+     └─ Interpretation: >180 = too fast; <100 = too slow for typical lectures
+
+  7. Articulation Rate (AR)
+     ├─ What: Words per minute during active speech only (excludes pauses)
+     ├─ How: (word count / active speech duration) × 60
+     ├─ Your Average: 132.2 WPM
+     └─ Interpretation: Typically 20-50 WPM higher than SR
+
+  8. Words Per Chunk
+     ├─ What: Number of words spoken per 10-second analysis window
+     ├─ Your Average: 21.9 words/chunk
+     └─ Interpretation: ~20-30 words per 10s is typical for lectures
+
+  9. Pause Statistics
+     ├─ What: Inter-word gaps > 400ms are counted as pauses
+     ├─ Your Avg Pauses/Chunk: 0.0
+     ├─ Your Avg Pause Duration: 0.03 seconds
+     ├─ Your Avg Max Pause: 0.03 seconds
+     └─ Interpretation: 2-4 pauses per 10s is natural; >0.8s avg = over-pausing
+
+  10. Filler Words
+      ├─ What: Common hesitation words (um, uh, like, so, actually, etc.)
+      ├─ Tracked Fillers: um, uh, er, ah, so, like, actually, basically, right, okay, literally
+      ├─ Your Filler Rate: 1.9%
+      ├─ Your Avg Fillers/Chunk: 0.4
+      └─ Interpretation: <5% is professional; >8% is noticeable to audience
+
+────────────────────────────────────────
+C. VIDEO MOTION FEATURES
+────────────────────────────────────────
+
+  11. Global Motion Index
+      ├─ What: Overall physical movement detected in video frames
+      ├─ How: Mean absolute frame difference (grayscale), normalized to [0,1]
+      ├─ Your Average: 0.0133
+      ├─ Interpretation Scale:
+      │   < 0.003 = Very static (may lack engagement)
+      │   0.003-0.015 = Moderate movement (acceptable)
+      │   0.015-0.035 = Active movement (good engagement)
+      │   > 0.035 = Excessive (potentially distracting)
+      └─ Your Assessment: physical movement is moderate and generally acceptable.
+
+────────────────────────────────────────
+D. FSM BEHAVIORAL STATES
+────────────────────────────────────────
+
+  The system classifies each 10-second chunk into one of these states:
+
+  ┌───────┬─────────────────────┬─────────────────────────────────────────┐
+  │ State │ Name                │ Trigger Condition                       │
+  ├───────┼─────────────────────┼─────────────────────────────────────────┤
+  │  S0   │ Silence             │ RMS < 0.005 and < 2 words detected      │
+  │  S1   │ Normal              │ All metrics within ideal ranges         │
+  │  S2   │ Too Fast            │ Speaking rate > 180 WPM                 │
+  │  S3   │ Over-Pausing        │ Many/long pauses, speaking rate < 120   │
+  │  S4   │ Too Soft            │ RMS < 0.02 (low volume)                 │
+  │  S5   │ Monotone            │ Pitch std dev < 20 Hz                   │
+  │  S6   │ High Fillers        │ Filler rate > 5% of words               │
+  │  S7   │ Low Clarity         │ Clarity index < 1.0                     │
+  └───────┴─────────────────────┴─────────────────────────────────────────┘
+
+  Your State Distribution:
+    S0 (Silence / No Speech ): [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0.0%
+    S1 (Normal              ): [████████████████████████████░░░░░░░░░░░░]  71.8%
+    S2 (Too Fast            ): [█░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   2.6%
+    S3 (Over-Pausing / Too Slow): [████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]  20.5%
+    S4 (Too Soft            ): [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0.0%
+    S5 (Monotone Voice      ): [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0.0%
+    S6 (High Filler Usage   ): [██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   5.1%
+    S7 (Low Voice Clarity   ): [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0.0%
+
+============================================================
+5. Detailed Future Improvement Plan
+============================================================
+
+┌─────────────────────────────────────────────────────────┐
+│              PRIORITIZED ACTION ITEMS                    │
+└─────────────────────────────────────────────────────────┘
+
+  ✓ No critical issues detected. Focus on refinement.
+
+
+────────────────────────────────────────
+A. PACING IMPROVEMENT STRATEGIES
+────────────────────────────────────────
+
+  Problem: Too many or too long pauses (20.5% of lecture in S3 state)
+  Your avg pause duration: 0.03s (Ideal: 0.3-0.6s)
+
+  IMMEDIATE ACTIONS:
+  ├─ 1. Prepare talking points more thoroughly to reduce hesitation
+  ├─ 2. Practice transitions between topics until they feel fluid
+  ├─ 3. Replace long pauses with brief filler-free transitions
+  └─ 4. Avoid reading directly from notes - use bullet points instead
+
+  WEEKLY PRACTICE:
+  ├─ Rehearse your entire lecture out loud 2-3 times before delivery
+  ├─ Time yourself and identify where pauses occur
+  └─ Create "bridge sentences" for each topic transition
+
+  LONG-TERM GOAL: Keep pauses under 0.8s on average; reduce S3 to <10%
+
+────────────────────────────────────────
+B. VOICE CLARITY IMPROVEMENT STRATEGIES
+────────────────────────────────────────
+
+  Status: Clarity is good (Index: 96.32, S7: 0.0%)
+
+  REFINEMENT SUGGESTIONS:
+  ├─ 1. Maintain current microphone setup and room conditions
+  ├─ 2. Stay hydrated during lectures to maintain vocal quality
+  └─ 3. Consider slight enunciation emphasis for technical terms
+
+  MAINTENANCE: No major changes needed; monitor for degradation
+
+────────────────────────────────────────
+C. FILLER WORD REDUCTION STRATEGIES
+────────────────────────────────────────
+
+  Status: Filler usage is controlled (1.9% filler rate)
+
+  REFINEMENT SUGGESTIONS:
+  ├─ 1. Continue awareness practice to prevent filler creep
+  ├─ 2. Watch for stress-induced filler spikes during Q&A
+  └─ 3. Substitute remaining fillers with confident pauses
+
+  MAINTENANCE: Current performance is professional; stay vigilant
+
+────────────────────────────────────────
+D. VOCAL EXPRESSIVENESS STRATEGIES
+────────────────────────────────────────
+
+  Status: Expressiveness is adequate (Pitch std: 77.1 Hz)
+
+  REFINEMENT SUGGESTIONS:
+  ├─ 1. Add more dynamic range during key transitions
+  ├─ 2. Use strategic pitch drops for authoritative statements
+  └─ 3. Maintain energy level consistency throughout lecture
+
+  MAINTENANCE: Current expressiveness supports engagement; continue practice
+
+────────────────────────────────────────
+E. PHYSICAL PRESENCE STRATEGIES
+────────────────────────────────────────
+
+  Status: Physical presence is appropriate (Motion index: 0.0133)
+
+  REFINEMENT SUGGESTIONS:
+  ├─ 1. Ensure gestures align with verbal emphasis points
+  ├─ 2. Maintain consistent camera framing if recording
+  └─ 3. Physical movement is moderate and generally acceptable.
+
+  MAINTENANCE: Current movement level supports engagement
+
+
+────────────────────────────────────────
+F. SUGGESTED WEEKLY IMPROVEMENT SCHEDULE
+────────────────────────────────────────
+
+  ┌─────────────┬────────────────────────────────────────────────────────┐
+  │ Day         │ Focus Area                                             │
+  ├─────────────┼────────────────────────────────────────────────────────┤
+  │ Monday      │ Review previous lecture recording (15 min analysis)    │
+  │ Tuesday     │ Pacing practice - read passages at target WPM          │
+  │ Wednesday   │ Filler awareness - record 5-min impromptu speech       │
+  │ Thursday    │ Expressiveness - practice dynamic pitch exercises      │
+  │ Friday      │ Full rehearsal of upcoming lecture content             │
+  │ Weekend     │ Review professional speakers (TED/YouTube) for ideas   │
+  └─────────────┴────────────────────────────────────────────────────────┘
+
+  PROGRESS TRACKING:
+  ├─ Run this analysis tool after every 3-5 lectures
+  ├─ Track scores over time in a spreadsheet
+  ├─ Set specific numeric goals (e.g., "Reduce S2 from 15% to 8%")
+  └─ Celebrate improvements - even 5% better is significant progress
+
+
+────────────────────────────────────────
+G. FINAL NOTES & NEXT STEPS
+────────────────────────────────────────
+
+  YOUR CURRENT OVERALL SCORE: 8.8/10
+
+  TARGET SCORE FOR NEXT ANALYSIS: 9.8/10
+
+  KEY FOCUS AREAS (pick 1-2 to work on first):
+    → Continue refining current strong performance
+
+  REMEMBER:
+  ├─ Improvement is gradual - expect 5-10% gains per month with consistent practice
+  ├─ Not all lectures will be perfect - focus on trends, not individual sessions
+  ├─ Student feedback is valuable - combine automated metrics with human input
+  └─ Teaching is a skill that develops over years - be patient with yourself
+
+  ═══════════════════════════════════════════════════════════════════════════
+  This automated report provides objective metrics. Combine with peer feedback
+  and student evaluations for a complete picture of teaching effectiveness.
+  ═══════════════════════════════════════════════════════════════════════════
+
+
+============================================================
+END OF REPORT
+============================================================
